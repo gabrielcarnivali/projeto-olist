@@ -1,8 +1,9 @@
 # importei as bibliotecas necessárias mediante estudos para a praticidade e eficiência do código
 # uni todo os arquivos csv em um dicionário, criando uma chave para cada arquivo
 # criei um dicionário para armazenar os dataframes, removendo duplicatas
+# vi a necessidade de converter as colunas de data para o tipo datetime, garantindo a consistência dos dados e a praticidade na hora de realizar análises com sql
 # com a biblioteca sqlalchemy, criei a engine de conexão com o banco de dados PostgreSQL e subi as tabelas para o banco de dados
-# com a progressão dos estudos identifiquei a necessidade de utilizar a biblioteca dotenv para armazenar as credenciais do banco de dados em um arquivo .env, evitando expor informações sensíveis no código na hora de subir o projeto para o GitHub, garantindo a segurança das informações sensíveis e facilitando a manutenção do código.
+# com a progressão dos estudos identifiquei a necessidade de utilizar a biblioteca dotenv para armazenar as credenciais do banco de dados em um arquivo .env, evitando expor informações sensíveis no código na hora de subir o projeto para o GitHub, garantindo a segurança das informações sensíveis e facilitando a manutenção do código
 
 import pandas as pd
 import sqlalchemy as sa
@@ -30,7 +31,13 @@ tabelas = {}
 for nome, caminho in arquivos.items():
 
     df = pd.read_csv(caminho)
+    
+    for col in df.columns:
+        if 'date' in col or 'timestamp' in col:
+             df[col] = pd.to_datetime(df[col], errors='coerce')
+
     tabelas[nome] = df.drop_duplicates()
+
 
 
 engine = sa.create_engine(
